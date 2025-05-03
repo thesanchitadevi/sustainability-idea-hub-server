@@ -77,74 +77,74 @@ const createUser = async (req: Request) => {
   return result;
 };
 
-// const getAllUsersFromDB = async (params: any, options: IPaginationOptions) => {
-//   const { page, limit, skip } = paginationHelper.calculatePagination(options);
-//   const { searchTerm, ...filterData } = params;
+const getAllUsersFromDB = async (params: any, options: IPaginationOptions) => {
+  const { page, limit, skip } = paginationHelper.calculatePagination(options);
+  const { searchTerm, ...filterData } = params;
 
-//   const andCondions: Prisma.UserWhereInput[] = [];
+  const andCondions: Prisma.UserWhereInput[] = [];
 
-//   //console.log(filterData);
-//   if (params.searchTerm) {
-//     andCondions.push({
-//       OR: userSearchableFields.map((field) => ({
-//         [field]: {
-//           contains: params.searchTerm,
-//           mode: "insensitive",
-//         },
-//       })),
-//     });
-//   }
+  //console.log(filterData);
+  if (params.searchTerm) {
+    andCondions.push({
+      OR: userSearchableFields.map((field) => ({
+        [field]: {
+          contains: params.searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
 
-//   if (Object.keys(filterData).length > 0) {
-//     andCondions.push({
-//       AND: Object.keys(filterData).map((key) => ({
-//         [key]: {
-//           equals: (filterData as any)[key],
-//         },
-//       })),
-//     });
-//   }
+  if (Object.keys(filterData).length > 0) {
+    andCondions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
 
-//   const whereConditons: Prisma.UserWhereInput =
-//     andCondions.length > 0 ? { AND: andCondions } : {};
+  const whereConditons: Prisma.UserWhereInput =
+    andCondions.length > 0 ? { AND: andCondions } : {};
 
-//   const result = await prisma.user.findMany({
-//     where: whereConditons,
-//     skip,
-//     take: limit,
-//     orderBy:
-//       options.sortBy && options.sortOrder
-//         ? {
-//             [options.sortBy]: options.sortOrder,
-//           }
-//         : {
-//             createdAt: "desc",
-//           },
-//     select: {
-//       id: true,
-//       email: true,
-//       role: true,
+  const result = await prisma.user.findMany({
+    where: whereConditons,
+    skip,
+    take: limit,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? {
+            [options.sortBy]: options.sortOrder,
+          }
+        : {
+            createdAt: "desc",
+          },
+    select: {
+      id: true,
+      email: true,
+      role: true,
      
-//       status: true,
-//       createdAt: true,
-//       updatedAt: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
      
-//     },
-//   });
+    },
+  });
 
-//   const total = await prisma.user.count({
-//     where: whereConditons,
-//   });
+  const total = await prisma.user.count({
+    where: whereConditons,
+  });
 
-//   return {
-//     meta: {
-//       page,
-//       limit,
-//       total,
-//     },
-//     data: result,
-//   };
-// };
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
 
 // const changeProfileStatus = async (id: string, status: UserRole) => {
 //   const userData = await prisma.user.findUniqueOrThrow({
@@ -233,7 +233,7 @@ const createUser = async (req: Request) => {
 
 export const UserServices = {
   // createAdmin,
-  // getAllUsersFromDB,
+  getAllUsersFromDB,
   // changeProfileStatus,
   // getMyProfile,
   // updateMyProfile,

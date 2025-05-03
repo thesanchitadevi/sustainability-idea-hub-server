@@ -18,20 +18,20 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const gettAllUsers = catchAsync(async (req: Request, res: Response) => {
-//   const filters = Pick(req.query, userFilterableFields);
-//   const options = Pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+const gettAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const filters = Pick(req.query, userFilterableFields);
+  const options = Pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
-//   const result = await UserServices.getAllUsersFromDB(filters, options);
+  const result = await UserServices.getAllUsersFromDB(filters, options);
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "Users retrieved successfully!",
-//     meta: result.meta,
-//     data: result.data,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Users retrieved successfully!",
+    meta: result.meta,
+    data: result.data,
+  });
+});
 
 // const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
 //   const { id } = req.params;
@@ -75,7 +75,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 
 export const UserControllers = {
   createUser,
-  // gettAllUsers,
+  gettAllUsers,
   // changeProfileStatus,
   // getMyProfile,
   // updateMyProfile,
