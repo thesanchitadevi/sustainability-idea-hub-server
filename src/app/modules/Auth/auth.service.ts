@@ -46,7 +46,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
   return {
     accessToken,
     refreshToken,
-    needPasswordChange: userData?.needPasswordChange,
+   
   };
 };
 
@@ -79,7 +79,7 @@ const refreshToken = async (token: string) => {
 
   return {
     accessToken,
-    needPasswordChange: userData.needPasswordChange,
+    
   };
 };
 
@@ -108,7 +108,7 @@ const changePassword = async (user: any, payload: any) => {
     },
     data: {
       password: hashedPassword,
-      needPasswordChange: false,
+      
     },
   });
 
@@ -188,7 +188,7 @@ const resetPassword = async (
     },
     data: {
       password: hashedPassword,
-      needPasswordChange: false,
+      
     },
   });
 };

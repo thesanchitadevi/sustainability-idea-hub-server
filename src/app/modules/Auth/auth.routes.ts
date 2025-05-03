@@ -9,7 +9,7 @@ router.post("/login", AuthControllers.loginUser);
 router.post("/refresh-token", AuthControllers.refreshToken);
 router.post(
   "/change-password",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  auth(UserRole.ADMIN),
   AuthControllers.changePassword
 );
 router.post(

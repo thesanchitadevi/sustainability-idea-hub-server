@@ -10,6 +10,8 @@ cloudinary.config({
   api_secret: "lV-GM5lVDXxWKkIEyiyUiZoNCow",
 });
 
+
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(process.cwd(), "uploads"));
@@ -24,7 +26,7 @@ const upload = multer({ storage: storage });
 const uploadToCloudinary = async (
   file: IFile
 ): Promise<ICloudinaryResponse | undefined> => {
-  console.log("file", file);
+  // console.log("file", file);
 
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(

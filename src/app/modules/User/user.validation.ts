@@ -5,7 +5,7 @@ const createAdmin = z.object({
   password: z.string({
     required_error: "Password is required",
   }),
-  admin: z.object({
+  user: z.object({
     name: z.string({
       required_error: "Name is required!",
     }),

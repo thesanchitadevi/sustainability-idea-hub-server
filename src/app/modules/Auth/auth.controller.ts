@@ -21,7 +21,7 @@ const loginUser = catchAsync(async (req, res) => {
     message: "Logged in successfully!",
     data: {
       accessToken: result.accessToken,
-      needPasswordChange: result.needPasswordChange,
+      
     },
   });
 });

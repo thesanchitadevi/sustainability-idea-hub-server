@@ -51,8 +51,8 @@ model User {
   name          String
   password      String
   profile_image String
-  role          UserRole
-  status        UserStatus
+  role          UserRole @default(MEMBERS)
+  status        UserStatus @default(ACTIVE)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

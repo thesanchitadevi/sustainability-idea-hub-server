@@ -9,32 +9,32 @@ const router = express.Router();
 
 router.get(
   "/",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  auth(UserRole.ADMIN),
   AdminControllers.getAllAdmin
 );
 
 router.get(
   "/:id",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  auth(UserRole.ADMIN),
   AdminControllers.getAdminById
 );
 
 router.patch(
   "/:id",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  auth(UserRole.ADMIN),
   validateRequest(AdminValidationSchemas.updateValidation),
   AdminControllers.updateAdmin
 );
 
 router.delete(
   "/:id",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  auth(UserRole.ADMIN),
   AdminControllers.deleteAdmin
 );
 
 router.delete(
   "/soft-delete/:id",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  auth(UserRole.ADMIN),
   AdminControllers.softDeleteAdmin
 );
 
