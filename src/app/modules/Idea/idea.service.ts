@@ -15,10 +15,6 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
     })
   );
 
-  console.log(uploadedImages, "uploadedImages");
-
-  console.log(userId, "user");
-
   // Create the idea with associated images
   const result = await prisma.idea.create({
     data: {
@@ -35,12 +31,16 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
           data: uploadedImages,
         },
       },
-      userId,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
     },
     include: {
       images: true,
       user: {
-        // Include basic user info if needed
+        // Include basic user info
         select: {
           id: true,
           name: true,
@@ -49,9 +49,9 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
       },
     },
   });
-  console.log(result, "result");
+  // console.log(result, "result");
 
-  // return result;
+  return result;
 };
 
 export const IdeaServices = {
