@@ -22,4 +22,6 @@ router.post(
   }
 );
 
+router.get("/", IdeaController.getAllIdeas);
+
 export const IdeaRoutes = router;

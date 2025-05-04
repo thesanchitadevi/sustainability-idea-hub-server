@@ -1,7 +1,10 @@
+import { IdeaCategory, Prisma } from "@prisma/client";
 import { fileUploader } from "../../../helpers/fileUploader";
 import prisma from "../../../shared/prisma";
-import { IAuthUser } from "../../interfaces/common";
 import { IFile } from "../../interfaces/file";
+import { IPaginationOptions } from "../../interfaces/pagination";
+import { paginationHelper } from "../../../helpers/paginationHelper";
+import { IIdeaFilters } from "./idea.interface";
 
 // Create a new idea with image uploads
 const createIdea = async (userId: string, payload: any, files: IFile[]) => {
@@ -45,6 +48,7 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
           id: true,
           name: true,
           email: true,
+          profile_image: true,
         },
       },
     },
@@ -54,6 +58,113 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
   return result;
 };
 
+// Get all ideas with pagination and filtering
+const getAllIdeas = async (
+  filters: IIdeaFilters,
+  paginationOptions: IPaginationOptions
+) => {
+  const { limit, page, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(paginationOptions);
+
+  const { searchTerm, category, isPaid, ...filterData } = filters;
+
+  const andConditions: Prisma.IdeaWhereInput[] = [];
+
+  // Search term filtering
+  if (searchTerm) {
+    andConditions.push({
+      OR: [
+        {
+          title: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          description: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          problem_statement: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          proposed_solution: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+      ],
+    });
+  }
+
+  // Category filtering
+  if (category) {
+    andConditions.push({
+      category: {
+        equals: category as IdeaCategory,
+      },
+    });
+  }
+
+  // IsPaid filtering
+  if (isPaid !== undefined) {
+    andConditions.push({
+      isPaid: isPaid === "true" || isPaid === true,
+    });
+  }
+
+  // Filter by status, isPublished, etc.
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.entries(filterData).map(([field, value]) => ({
+        [field]: { equals: value },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.IdeaWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
+  const result = await prisma.idea.findMany({
+    where: whereConditions,
+    include: {
+      images: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profile_image: true,
+        },
+      },
+    },
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+  });
+
+  const total = await prisma.idea.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+    },
+    data: result,
+  };
+};
+
 export const IdeaServices = {
   createIdea,
+  getAllIdeas,
 };

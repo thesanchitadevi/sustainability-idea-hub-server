@@ -6,6 +6,8 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { IFile } from "../../interfaces/file";
 import { AppError } from "../../errors/AppError";
+import Pick from "../../../shared/pick";
+import { ideaFilterableFields } from "./idea.constant";
 
 // Create a new idea
 const createIdea = catchAsync(
@@ -36,6 +38,21 @@ const createIdea = catchAsync(
   }
 );
 
+// Get all ideas with pagination and filtering
+const getAllIdeas = catchAsync(async (req: Request, res: Response) => {
+  const filters = Pick(req.query, ideaFilterableFields);
+  const options = Pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+  const result = await IdeaServices.getAllIdeas(filters, options);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Ideas retrieved successfully",
+    data: result,
+  });
+});
+
 export const IdeaController = {
   createIdea,
+  getAllIdeas,
 };
