@@ -31,96 +31,106 @@ enum IdeaStatus {
   UNDER_REVIEW
   APPROVED
   REJECT
-  DRAFT 
+  DRAFT
 }
 
-enum voteType {
+enum VoteType {
   UP_VOTE
   DOWN_VOTE
 }
 
-enum ideaCategory {
-  Energy
-  Waste
-  Transportation
+enum IdeaCategory {
+  ENERGY
+  WASTE
+  TRANSPORTATION
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
+  id            String     @id @default(uuid())
+  email         String     @unique
   name          String
   password      String
   profile_image String
-  role          UserRole @default(MEMBERS)
+  role          UserRole   @default(MEMBERS)
   status        UserStatus @default(ACTIVE)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 
-  ideas         Idea[]
-  comments      Comment[]
-  payments      payment[]
-  votes         vote[]
+  ideas    Idea[]
+  comments Comment[]
+  payments Payment[]
+  votes    Vote[]
+
+  @@map("users")
 }
 
 model Idea {
-  id                  String        @id @default(uuid())
-  user_id             String
-  title               String
-  problem_statement   String
-  proposed_solution   String
-  description         String
-  isPaid              Boolean
-  status              IdeaStatus
-  isPublished         Boolean
-  category            ideaCategory
-  rejectionFeedback   String?
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  id                String       @id @default(uuid())
+  user_id           String
+  title             String
+  problem_statement String
+  proposed_solution String
+  description       String
+  isPaid            Boolean
+  status            IdeaStatus
+  isPublished       Boolean
+  category          IdeaCategory
+  rejectionFeedback String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
-  user                User          @relation(fields: [user_id], references: [id])
-  payments            payment[]
-  comments            Comment[]
-  images              IdeaImages[]
-  votes               vote[]
+  user     User         @relation(fields: [user_id], references: [id])
+  payments Payment[]
+  comments Comment[]
+  images   IdeaImages[]
+  votes    Vote[]
+
+  @@map("ideas")
 }
 
-model payment {
-  payment_id  String         @id @default(uuid())
-  UserId      String
-  IdeaId      String
-  amount      Int
-  status      paymentStatus
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+model Payment {
+  payment_id String        @id @default(uuid())
+  UserId     String
+  IdeaId     String
+  amount     Int
+  status     paymentStatus
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
 
-  user        User           @relation(fields: [UserId], references: [id])
-  idea        Idea           @relation(fields: [IdeaId], references: [id])
+  user User @relation(fields: [UserId], references: [id])
+  idea Idea @relation(fields: [IdeaId], references: [id])
+
+  @@map("payments")
 }
 
 model Comment {
-  id           String     @id @default(uuid())
-  UserId       String
-  IdeaId       String
-  parent_id    String?
-  commentText  String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id          String   @id @default(uuid())
+  UserId      String
+  IdeaId      String
+  parent_id   String?
+  commentText String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user         User       @relation(fields: [UserId], references: [id])
-  idea         Idea       @relation(fields: [IdeaId], references: [id])
-  parent       Comment?   @relation("CommentReplies", fields: [parent_id], references: [id])
-  replies      Comment[]  @relation("CommentReplies")
+  user    User      @relation(fields: [UserId], references: [id])
+  idea    Idea      @relation(fields: [IdeaId], references: [id])
+  parent  Comment?  @relation("CommentReplies", fields: [parent_id], references: [id])
+  replies Comment[] @relation("CommentReplies")
+
+  @@map("comments")
 }
 
-model vote {
-  id         String     @id @default(uuid())
-  user_id    String
-  idea_id    String
-  vote_type  voteType
-  createdAt  DateTime   @default(now())
+model Vote {
+  id        String   @id @default(uuid())
+  user_id   String
+  idea_id   String
+  vote_type VoteType
+  createdAt DateTime @default(now())
 
-  user       User       @relation(fields: [user_id], references: [id])
-  idea       Idea       @relation(fields: [idea_id], references: [id])
+  user User @relation(fields: [user_id], references: [id])
+  idea Idea @relation(fields: [idea_id], references: [id])
+
+  @@map("votes")
 }
 
 model IdeaImages {
@@ -130,6 +140,7 @@ model IdeaImages {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  idea      Idea     @relation(fields: [idea_id], references: [id])
-}
+  idea Idea @relation(fields: [idea_id], references: [id])
 
+  @@map("idea_images")
+}
