@@ -8,6 +8,7 @@ import { IFile } from "../../interfaces/file";
 import { AppError } from "../../errors/AppError";
 import Pick from "../../../shared/pick";
 import { ideaFilterableFields } from "./idea.constant";
+import { UserRole } from "@prisma/client";
 
 // Create a new idea
 const createIdea = catchAsync(
@@ -52,7 +53,73 @@ const getAllIdeas = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Get a single idea by ID with role-based access control
+const getIdeaById = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const { id } = req.params;
+
+    // Get user role and ID from request
+    const userRole = req.user?.role as UserRole;
+    const userId = req.user?.userId;
+    const result = await IdeaServices.getIdeaById(id, userRole, userId);
+
+    // Check if the idea exists
+    if (!result) {
+      throw new AppError(httpStatus.NOT_FOUND, "Idea not found");
+    }
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Idea retrieved successfully",
+      data: result,
+    });
+  }
+);
+
+// Delete an idea
+const deleteIdea = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const { id } = req.params;
+    const userRole = req.user?.role as UserRole;
+    const userId = req.user?.userId;
+
+    await IdeaServices.deleteIdea(id, userRole, userId);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Idea deleted successfully",
+      data: null,
+    });
+  }
+);
+
+// Update idea status
+const updateStatus = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const { id } = req.params;
+    const userRole = req.user?.role as UserRole;
+
+    const result = await IdeaServices.updateIdeaStatus(
+      id,
+      req.body,
+      userRole
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Idea status updated successfully',
+      data: result
+    });
+  }
+);
+
 export const IdeaController = {
   createIdea,
   getAllIdeas,
+  getIdeaById,
+  deleteIdea,
+  updateStatus,
 };

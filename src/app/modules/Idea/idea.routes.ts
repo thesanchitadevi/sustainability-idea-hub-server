@@ -4,6 +4,7 @@ import { UserRole } from "@prisma/client";
 import { fileUploader } from "../../../helpers/fileUploader";
 import { IdeaController } from "./idea.controller";
 import { IdeaValidation } from "./idea.validation";
+import validateRequest from "../../middlewares/validateRequest";
 
 const router = express.Router();
 
@@ -23,5 +24,23 @@ router.post(
 );
 
 router.get("/", IdeaController.getAllIdeas);
+router.get(
+  "/:id",
+  auth(UserRole.MEMBERS, UserRole.ADMIN),
+  IdeaController.getIdeaById
+);
+
+router.delete(
+  "/:id",
+  auth(UserRole.MEMBERS, UserRole.ADMIN),
+  IdeaController.deleteIdea
+);
+
+router.patch(
+  '/:id/status',
+  auth(UserRole.ADMIN), // Only admins can access
+  validateRequest(IdeaValidation.updateStatus),
+  IdeaController.updateStatus
+);
 
 export const IdeaRoutes = router;

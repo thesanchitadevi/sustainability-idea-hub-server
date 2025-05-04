@@ -21,6 +21,11 @@ const createIdeaSchema = z.object({
   }),
 });
 
+const updateStatus = z.object({
+  status: z.enum(["DRAFT", "UNDER_REVIEW", "APPROVED", "REJECTED"]),
+});
+
 export const IdeaValidation = {
   createIdeaSchema,
+  updateStatus,
 };
