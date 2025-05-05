@@ -33,17 +33,28 @@ const gettAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const result = await UserServices.changeProfileStatus(id, req.body);
+const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserServices.changeProfileStatus(id, req.body);
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "Profile status changed successfully!",
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Profile status changed successfully!",
+    data: result,
+  });
+});
+const changeProfileRole = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserServices.changeProfileRole(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User Role changed successfully!",
+    data: result,
+  });
+});
 
 // const getMyProfile = catchAsync(
 //   async (req: Request & { user?: IAuthUser }, res: Response) => {
@@ -76,6 +87,8 @@ const gettAllUsers = catchAsync(async (req: Request, res: Response) => {
 export const UserControllers = {
   createUser,
   gettAllUsers,
+  changeProfileStatus,
+  changeProfileRole
   // changeProfileStatus,
   // getMyProfile,
   // updateMyProfile,

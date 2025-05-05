@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserRouter } from "../modules/User/user.routes";
 import { AuthRouter } from "../modules/Auth/auth.routes";
 import { IdeaRoutes } from "../modules/Idea/idea.routes";
+import { AdminRouter } from "../modules/Admin/admin.routes";
 
 const router = Router();
 
@@ -19,6 +20,10 @@ const moduleRoutes = [
     path: "/idea",
     module: IdeaRoutes,
   },
+  {
+    path:"/admin",
+    module: AdminRouter
+  }
 ];
 
 moduleRoutes.forEach((route) => {

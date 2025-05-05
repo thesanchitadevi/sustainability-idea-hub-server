@@ -146,22 +146,39 @@ const getAllUsersFromDB = async (params: any, options: IPaginationOptions) => {
   };
 };
 
-// const changeProfileStatus = async (id: string, status: UserRole) => {
-//   const userData = await prisma.user.findUniqueOrThrow({
-//     where: {
-//       id,
-//     },
-//   });
+const changeProfileStatus = async (id: string, status: UserRole) => {
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
 
-//   const updateUserStatus = await prisma.user.update({
-//     where: {
-//       id,
-//     },
-//     data: status,
-//   });
+  const updateUserStatus = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: status,
+  });
 
-//   return updateUserStatus;
-// };
+  return updateUserStatus;
+};
+const changeProfileRole = async (id: string, role: UserRole) => {
+  await prisma.user.findUniqueOrThrow({
+   where: {
+     id,
+   },
+ });
+
+
+ const updateUserRole = await prisma.user.update({
+   where: {
+     id,
+   },
+   data: role,
+ });
+
+ return updateUserRole;
+};
 
 // const getMyProfile = async (user: IAuthUser) => {
 //   const userInfo = await prisma.user.findUniqueOrThrow({
@@ -234,6 +251,8 @@ const getAllUsersFromDB = async (params: any, options: IPaginationOptions) => {
 export const UserServices = {
   // createAdmin,
   getAllUsersFromDB,
+  changeProfileStatus,
+  changeProfileRole,
   // changeProfileStatus,
   // getMyProfile,
   // updateMyProfile,
