@@ -1,7 +1,10 @@
 import { Router } from "express";
+import { AdminRouter } from "../modules/Admin/admin.routes";
 import { AuthRouter } from "../modules/Auth/auth.routes";
+import { CommentRouter } from "../modules/comment/comment.route";
 import { IdeaRoutes } from "../modules/Idea/idea.routes";
 import { UserRouter } from "../modules/User/user.routes";
+import { VoteRoutes } from "../modules/vote/vote.route";
 
 const router = Router();
 
@@ -18,6 +21,18 @@ const moduleRoutes = [
   {
     path: "/idea",
     module: IdeaRoutes,
+  },
+  {
+    path: "/vote",
+    module: VoteRoutes,
+  },
+  {
+    path: "/comment",
+    module: CommentRouter,
+  },
+  {
+    path: "/admin",
+    module: AdminRouter,
   },
 ];
 
