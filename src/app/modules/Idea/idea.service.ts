@@ -1,12 +1,12 @@
 import { Idea, IdeaCategory, Prisma, UserRole } from "@prisma/client";
+import httpStatus from "http-status";
 import { fileUploader } from "../../../helpers/fileUploader";
+import { paginationHelper } from "../../../helpers/paginationHelper";
 import prisma from "../../../shared/prisma";
+import { AppError } from "../../errors/AppError";
 import { IFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/pagination";
-import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IIdeaFilters, IUpdateIdeaStatus } from "./idea.interface";
-import { AppError } from "../../errors/AppError";
-import httpStatus from "http-status";
 
 // Create a new idea with image uploads
 const createIdea = async (userId: string, payload: any, files: IFile[]) => {
@@ -255,17 +255,20 @@ const updateIdeaStatus = async (
 ): Promise<Idea> => {
   // Check if the idea exists
   const existingIdea = await prisma.idea.findUnique({
-    where: { id }
+    where: { id },
   });
 
   if (!existingIdea) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Idea not found');
+    throw new AppError(httpStatus.NOT_FOUND, "Idea not found");
   }
 
   // Check if the user is authorized to update the status
   // Only admins can update the status
   if (userRole !== UserRole.ADMIN) {
-    throw new AppError(httpStatus.FORBIDDEN, 'Only admins can update idea status');
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Only admins can update idea status"
+    );
   }
 
   // 3. Update the status
@@ -274,7 +277,8 @@ const updateIdeaStatus = async (
     data: {
       status: statusData.status,
       // Automatically publish when approved
-      isPublished: statusData.status === 'APPROVED' ? true : existingIdea.isPublished
+      isPublished:
+        statusData.status === "APPROVED" ? true : existingIdea.isPublished,
     },
     include: {
       images: true,
@@ -282,10 +286,10 @@ const updateIdeaStatus = async (
         select: {
           id: true,
           name: true,
-          email: true
-        }
-      }
-    }
+          email: true,
+        },
+      },
+    },
   });
 };
 
@@ -294,5 +298,5 @@ export const IdeaServices = {
   getAllIdeas,
   getIdeaById,
   deleteIdea,
-  updateIdeaStatus
+  updateIdeaStatus,
 };
