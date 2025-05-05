@@ -10,7 +10,7 @@ import prisma from "../../../shared/prisma";
 import { IFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
-import { IIdeaFilters, IUpdateIdeaStatus } from "./idea.interface";
+import { IIdeaFilters } from "./idea.interface";
 import { AppError } from "../../errors/AppError";
 import httpStatus from "http-status";
 
@@ -61,7 +61,6 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
       },
     },
   });
-  // console.log(result, "result");
 
   return result;
 };
