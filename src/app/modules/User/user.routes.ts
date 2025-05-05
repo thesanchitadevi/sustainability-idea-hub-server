@@ -38,11 +38,17 @@ router.post(
 
 
 
-// router.patch(
-//   "/:id/status",
-//   auth( UserRole.ADMIN),
-//   validateRequest(UserValidationSchema.updateStatus),
-//   UserControllers.changeProfileStatus
-// );
+router.patch(
+  "/:id/status",
+  auth( UserRole.ADMIN),
+  validateRequest(UserValidationSchema.updateStatus),
+  UserControllers.changeProfileStatus
+);
+router.patch(
+  "/:id/role",
+  auth( UserRole.ADMIN),
+  validateRequest(UserValidationSchema.updateRole),
+  UserControllers.changeProfileRole
+);
 
 export const UserRouter = router;

@@ -1,12 +1,11 @@
 import { z } from "zod";
 
-const updateValidation = z.object({
+const rejectionFeedbackValidation = z.object({
   body: z.object({
-    name: z.string().optional(),
-    contactNumber: z.string().optional(),
+    rejectionFeedback: z.string({required_error: "rejectionFeedback is required"}),
   }),
 });
 
 export const AdminValidationSchemas = {
-  updateValidation,
+  rejectionFeedbackValidation,
 };

@@ -11,28 +11,28 @@ CREATE TYPE "paymentStatus" AS ENUM ('PENDING', 'FAILED', 'PAID');
 CREATE TYPE "IdeaStatus" AS ENUM ('UNDER_REVIEW', 'APPROVED', 'REJECT', 'DRAFT');
 
 -- CreateEnum
-CREATE TYPE "voteType" AS ENUM ('UP_VOTE', 'DOWN_VOTE');
+CREATE TYPE "VoteType" AS ENUM ('UP_VOTE', 'DOWN_VOTE');
 
 -- CreateEnum
-CREATE TYPE "ideaCategory" AS ENUM ('Energy', 'Waste', 'Transportation');
+CREATE TYPE "IdeaCategory" AS ENUM ('ENERGY', 'WASTE', 'TRANSPORTATION');
 
 -- CreateTable
-CREATE TABLE "User" (
+CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "profile_image" TEXT NOT NULL,
-    "role" "UserRole" NOT NULL,
-    "status" "UserStatus" NOT NULL,
+    "role" "UserRole" NOT NULL DEFAULT 'MEMBERS',
+    "status" "UserStatus" NOT NULL DEFAULT 'ACTIVE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Idea" (
+CREATE TABLE "ideas" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -42,16 +42,16 @@ CREATE TABLE "Idea" (
     "isPaid" BOOLEAN NOT NULL,
     "status" "IdeaStatus" NOT NULL,
     "isPublished" BOOLEAN NOT NULL,
-    "category" "ideaCategory" NOT NULL,
+    "category" "IdeaCategory" NOT NULL,
     "rejectionFeedback" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Idea_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ideas_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "payment" (
+CREATE TABLE "payments" (
     "payment_id" TEXT NOT NULL,
     "UserId" TEXT NOT NULL,
     "IdeaId" TEXT NOT NULL,
@@ -60,11 +60,11 @@ CREATE TABLE "payment" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "payment_pkey" PRIMARY KEY ("payment_id")
+    CONSTRAINT "payments_pkey" PRIMARY KEY ("payment_id")
 );
 
 -- CreateTable
-CREATE TABLE "Comment" (
+CREATE TABLE "comments" (
     "id" TEXT NOT NULL,
     "UserId" TEXT NOT NULL,
     "IdeaId" TEXT NOT NULL,
@@ -73,57 +73,57 @@ CREATE TABLE "Comment" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "vote" (
+CREATE TABLE "votes" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "idea_id" TEXT NOT NULL,
-    "vote_type" "voteType" NOT NULL,
+    "vote_type" "VoteType" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "vote_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "votes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "IdeaImages" (
+CREATE TABLE "idea_images" (
     "id" TEXT NOT NULL,
     "idea_id" TEXT NOT NULL,
     "imageUrl" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "IdeaImages_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "idea_images_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- AddForeignKey
-ALTER TABLE "Idea" ADD CONSTRAINT "Idea_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ideas" ADD CONSTRAINT "ideas_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "payment" ADD CONSTRAINT "payment_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "payments" ADD CONSTRAINT "payments_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "payment" ADD CONSTRAINT "payment_IdeaId_fkey" FOREIGN KEY ("IdeaId") REFERENCES "Idea"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "payments" ADD CONSTRAINT "payments_IdeaId_fkey" FOREIGN KEY ("IdeaId") REFERENCES "ideas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_IdeaId_fkey" FOREIGN KEY ("IdeaId") REFERENCES "Idea"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_IdeaId_fkey" FOREIGN KEY ("IdeaId") REFERENCES "ideas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "comments"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "vote" ADD CONSTRAINT "vote_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "votes" ADD CONSTRAINT "votes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "vote" ADD CONSTRAINT "vote_idea_id_fkey" FOREIGN KEY ("idea_id") REFERENCES "Idea"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "votes" ADD CONSTRAINT "votes_idea_id_fkey" FOREIGN KEY ("idea_id") REFERENCES "ideas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "IdeaImages" ADD CONSTRAINT "IdeaImages_idea_id_fkey" FOREIGN KEY ("idea_id") REFERENCES "Idea"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "idea_images" ADD CONSTRAINT "idea_images_idea_id_fkey" FOREIGN KEY ("idea_id") REFERENCES "ideas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
