@@ -20,3 +20,48 @@ export const createCommentService = async ({
     throw error;
   }
 };
+export const getCommentService = async (ideaId: string) => {
+  try {
+    const result = await prisma.comment.findMany({
+      where: {
+        idea_id: ideaId,
+      },
+      include: {
+        user: true,
+        replies: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// delete a comment
+export const deleteCommentService = async (commentId: string) => {
+  try {
+    // Use a transaction to ensure both operations complete or neither does
+    const result = await prisma.$transaction(async (tx) => {
+      // First, delete all child comments that have this comment as parent
+      await tx.comment.deleteMany({
+        where: {
+          parent_id: commentId,
+        },
+      });
+
+      // Then delete the comment itself
+      return tx.comment.delete({
+        where: {
+          id: commentId,
+        },
+      });
+    });
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
