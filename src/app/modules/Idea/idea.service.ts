@@ -1,5 +1,10 @@
-import { Idea, IdeaCategory, Prisma, UserRole } from "@prisma/client";
-import httpStatus from "http-status";
+import {
+  Idea,
+  IdeaCategory,
+  IdeaStatus,
+  Prisma,
+  UserRole,
+} from "@prisma/client";
 import { fileUploader } from "../../../helpers/fileUploader";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import prisma from "../../../shared/prisma";
@@ -213,6 +218,57 @@ const getIdeaById = async (
   return result;
 };
 
+// Update an idea
+const updateIdea = async (
+  id: string,
+  payload: {
+    title?: string;
+    problem_statement?: string;
+    proposed_solution?: string;
+    description?: string;
+  },
+  userRole: UserRole,
+  userId?: string
+): Promise<Idea> => {
+  // Check if the idea exists
+  const existingIdea = await prisma.idea.findUnique({
+    where: { id },
+  });
+
+  if (!existingIdea) {
+    throw new AppError(httpStatus.NOT_FOUND, "Idea not found");
+  }
+
+  // Check if the idea is published (prevent updates if published)
+  if (existingIdea.isPublished) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Only unpublished ideas can be updated"
+    );
+  }
+
+  // Update only allowed fields
+  return await prisma.idea.update({
+    where: { id },
+    data: {
+      title: payload.title,
+      problem_statement: payload.problem_statement,
+      proposed_solution: payload.proposed_solution,
+      description: payload.description,
+      updatedAt: new Date(), // Auto-update timestamp
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+};
+
 // Delete an idea
 const deleteIdea = async (
   id: string,
@@ -228,67 +284,95 @@ const deleteIdea = async (
     throw new AppError(httpStatus.NOT_FOUND, "Idea not found");
   }
 
-  // Check if the user is authorized to delete the idea
-  if (userRole !== UserRole.ADMIN && existingIdea.user_id !== userId) {
+  //  Check if idea is published (prevent deletion if published)
+  if (existingIdea.isPublished) {
     throw new AppError(
       httpStatus.FORBIDDEN,
-      "Not authorized to delete this idea"
+      "Only unpublished ideas can be deleted"
     );
   }
 
-  // Delete associated images from Cloudinary
-  await prisma.ideaImages.deleteMany({
-    where: { idea_id: id },
-  });
+  // Check if the user is the owner or an admin. Admin can delete any idea.
+  if (userRole !== UserRole.ADMIN && existingIdea.user_id !== userId) {
+    throw new AppError(httpStatus.FORBIDDEN, "Not your idea to delete");
+  }
 
-  // Delete the idea from the database
-  await prisma.idea.delete({
+  await prisma.$transaction([
+    // Delete associated images first
+    prisma.ideaImages.deleteMany({
+      where: { idea_id: id },
+    }),
+    // Then delete the idea
+    prisma.idea.delete({
+      where: { id },
+    }),
+  ]);
+};
+
+// Update idea status by admin
+const updateIdeaStatusByAdmin = async (
+  id: string,
+  statusData: { status: IdeaStatus; rejectionFeedback?: string },
+  userRole: UserRole
+): Promise<Idea> => {
+  // Verify admin privileges
+  if (userRole !== UserRole.ADMIN) {
+    throw new AppError(httpStatus.FORBIDDEN, "Admin access required");
+  }
+
+  const existingIdea = await prisma.idea.findUnique({ where: { id } });
+  if (!existingIdea) {
+    throw new AppError(httpStatus.NOT_FOUND, "Idea not found");
+  }
+
+  return await prisma.idea.update({
     where: { id },
+    data: {
+      status: statusData.status,
+      isPublished: statusData.status === IdeaStatus.APPROVED,
+      rejectionFeedback:
+        statusData.status === IdeaStatus.REJECT
+          ? statusData.rejectionFeedback || "No feedback provided"
+          : null,
+    },
+    include: {
+      images: true,
+      user: { select: { id: true, name: true, email: true } },
+    },
   });
 };
 
-// Update Status of an idea
-const updateIdeaStatus = async (
+const submitIdeaForReview = async (
   id: string,
-  statusData: IUpdateIdeaStatus,
-  userRole: UserRole
+  userId: string
 ): Promise<Idea> => {
-  // Check if the idea exists
-  const existingIdea = await prisma.idea.findUnique({
-    where: { id },
-  });
+  const existingIdea = await prisma.idea.findUnique({ where: { id } });
 
   if (!existingIdea) {
     throw new AppError(httpStatus.NOT_FOUND, "Idea not found");
   }
 
-  // Check if the user is authorized to update the status
-  // Only admins can update the status
-  if (userRole !== UserRole.ADMIN) {
+  // Verify ownership
+  if (existingIdea.user_id !== userId) {
+    throw new AppError(httpStatus.FORBIDDEN, "Not your idea to submit");
+  }
+
+  // Prevent resubmission if already under review/approved
+  if (existingIdea.status !== "DRAFT") {
     throw new AppError(
-      httpStatus.FORBIDDEN,
-      "Only admins can update idea status"
+      httpStatus.CONFLICT,
+      `Idea is already ${existingIdea.status.toLowerCase()}`
     );
   }
 
-  // 3. Update the status
   return await prisma.idea.update({
     where: { id },
     data: {
-      status: statusData.status,
-      // Automatically publish when approved
-      isPublished:
-        statusData.status === "APPROVED" ? true : existingIdea.isPublished,
+      status: "UNDER_REVIEW",
+      isPublished: false,
     },
     include: {
-      images: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
+      user: { select: { id: true, name: true, email: true } },
     },
   });
 };
@@ -297,6 +381,8 @@ export const IdeaServices = {
   createIdea,
   getAllIdeas,
   getIdeaById,
+  updateIdea,
   deleteIdea,
-  updateIdeaStatus,
+  updateIdeaStatusByAdmin,
+  submitIdeaForReview,
 };

@@ -1,4 +1,4 @@
-import { IdeaCategory } from "@prisma/client";
+import { IdeaCategory, IdeaStatus } from "@prisma/client";
 import { z } from "zod";
 
 // Create Idea Validation
@@ -21,11 +21,19 @@ const createIdeaSchema = z.object({
   }),
 });
 
+const updateIdeaSchema = z.object({
+  title: z.string().optional(),
+  problemStatement: z.string().optional(),
+  proposedSolution: z.string().optional(),
+  description: z.string().optional(),
+});
+
 const updateStatus = z.object({
-  status: z.enum(["DRAFT", "UNDER_REVIEW", "APPROVED", "REJECTED"]),
+  status: z.enum([...Object.values(IdeaStatus)] as [string, ...string[]]),
 });
 
 export const IdeaValidation = {
   createIdeaSchema,
+  updateIdeaSchema,
   updateStatus,
 };
