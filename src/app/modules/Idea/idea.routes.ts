@@ -30,6 +30,13 @@ router.get(
   IdeaController.getIdeaById
 );
 
+router.patch(
+  "/:id",
+  auth(UserRole.MEMBERS),
+  validateRequest(IdeaValidation.updateIdeaSchema),
+  IdeaController.updateIdea
+);
+
 router.delete(
   "/:id",
   auth(UserRole.MEMBERS, UserRole.ADMIN),
@@ -38,9 +45,14 @@ router.delete(
 
 router.patch(
   '/:id/status',
-  auth(UserRole.ADMIN), // Only admins can access
-  validateRequest(IdeaValidation.updateStatus),
+  auth(UserRole.ADMIN),
   IdeaController.updateStatus
+);
+
+router.post(
+  '/:id/submit',
+  auth(UserRole.MEMBERS),
+  IdeaController.submitForReview
 );
 
 export const IdeaRoutes = router;

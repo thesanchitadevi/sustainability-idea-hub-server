@@ -77,6 +77,29 @@ const getIdeaById = catchAsync(
   }
 );
 
+// Update an idea by ID
+const updateIdea = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const { id } = req.params;
+    const userRole = req.user?.role as UserRole;
+    const userId = req.user?.userId;
+
+    const result = await IdeaServices.updateIdea(
+      id,
+      req.body,
+      userRole,
+      userId
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Idea updated successfully",
+      data: result,
+    });
+  }
+);
+
 // Delete an idea
 const deleteIdea = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
@@ -101,7 +124,7 @@ const updateStatus = catchAsync(
     const { id } = req.params;
     const userRole = req.user?.role as UserRole;
 
-    const result = await IdeaServices.updateIdeaStatus(
+    const result = await IdeaServices.updateIdeaStatusByAdmin(
       id,
       req.body,
       userRole
@@ -110,8 +133,28 @@ const updateStatus = catchAsync(
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Idea status updated successfully',
-      data: result
+      message: "Idea status updated successfully",
+      data: result,
+    });
+  }
+);
+
+const submitForReview = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Authentication required");
+    }
+
+    const result = await IdeaServices.submitIdeaForReview(id, userId);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Idea submitted for review successfully",
+      data: result,
     });
   }
 );
@@ -120,6 +163,8 @@ export const IdeaController = {
   createIdea,
   getAllIdeas,
   getIdeaById,
+  updateIdea,
   deleteIdea,
   updateStatus,
+  submitForReview,
 };
