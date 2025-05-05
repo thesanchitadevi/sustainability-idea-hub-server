@@ -342,6 +342,7 @@ const updateIdeaStatusByAdmin = async (
   });
 };
 
+// Submit an idea for review
 const submitIdeaForReview = async (
   id: string,
   userId: string
