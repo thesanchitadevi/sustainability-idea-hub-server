@@ -77,7 +77,7 @@ const getIdeaById = catchAsync(
   }
 );
 
-// Update an idea by ID
+// Update an idea
 const updateIdea = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
     const { id } = req.params;
@@ -118,7 +118,7 @@ const deleteIdea = catchAsync(
   }
 );
 
-// Update idea status
+// Update idea status by admin
 const updateStatus = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
     const { id } = req.params;
@@ -139,6 +139,7 @@ const updateStatus = catchAsync(
   }
 );
 
+// Submit an idea for review
 const submitForReview = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
     const { id } = req.params;

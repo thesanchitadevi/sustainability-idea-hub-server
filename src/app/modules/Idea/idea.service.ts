@@ -11,6 +11,10 @@ import prisma from "../../../shared/prisma";
 import { AppError } from "../../errors/AppError";
 import { IFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/pagination";
+import { paginationHelper } from "../../../helpers/paginationHelper";
+import { IIdeaFilters } from "./idea.interface";
+import { AppError } from "../../errors/AppError";
+import httpStatus from "http-status";
 import { IIdeaFilters, IUpdateIdeaStatus } from "./idea.interface";
 
 // Create a new idea with image uploads
@@ -60,7 +64,6 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
       },
     },
   });
-  // console.log(result, "result");
 
   return result;
 };
@@ -342,6 +345,7 @@ const updateIdeaStatusByAdmin = async (
   });
 };
 
+// Submit an idea for review
 const submitIdeaForReview = async (
   id: string,
   userId: string
