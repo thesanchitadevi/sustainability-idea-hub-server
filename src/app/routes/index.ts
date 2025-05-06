@@ -3,6 +3,7 @@ import { UserRouter } from "../modules/User/user.routes";
 import { AuthRouter } from "../modules/Auth/auth.routes";
 import { IdeaRoutes } from "../modules/Idea/idea.routes";
 import { AdminRouter } from "../modules/Admin/admin.routes";
+import { PaymentRoutes } from "../modules/payment/payment.route";
 
 const router = Router();
 
@@ -23,7 +24,12 @@ const moduleRoutes = [
   {
     path:"/admin",
     module: AdminRouter
+  },
+  {
+    path:"/payment",
+    module:PaymentRoutes
   }
+  
 ];
 
 moduleRoutes.forEach((route) => {
