@@ -11,11 +11,8 @@ import prisma from "../../../shared/prisma";
 import { AppError } from "../../errors/AppError";
 import { IFile } from "../../interfaces/file";
 import { IPaginationOptions } from "../../interfaces/pagination";
-import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IIdeaFilters } from "./idea.interface";
-import { AppError } from "../../errors/AppError";
 import httpStatus from "http-status";
-import { IIdeaFilters, IUpdateIdeaStatus } from "./idea.interface";
 
 // Create a new idea with image uploads
 const createIdea = async (userId: string, payload: any, files: IFile[]) => {
@@ -23,8 +20,11 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
   const uploadedImages = await Promise.all(
     files.map(async (file) => {
       const cloudinaryResponse = await fileUploader.uploadToCloudinary(file);
+      if (!cloudinaryResponse?.secure_url) {
+        throw new Error("Image upload failed. secure_url not returned.");
+      }
       return {
-        imageUrl: cloudinaryResponse?.secure_url,
+        imageUrl: cloudinaryResponse.secure_url,
       };
     })
   );
