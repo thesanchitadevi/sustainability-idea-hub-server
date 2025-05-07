@@ -24,13 +24,36 @@ export const getCommentService = async (ideaId: string) => {
   try {
     const result = await prisma.comment.findMany({
       where: {
-        idea_id: ideaId,
+        AND: [
+          {
+            idea_id: ideaId,
+          },
+          {
+            parent_id: null,
+          },
+        ],
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profile_image: true,
+            role: true,
+          },
+        },
         replies: {
           include: {
-            user: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                profile_image: true,
+                role: true,
+              },
+            },
           },
         },
       },
