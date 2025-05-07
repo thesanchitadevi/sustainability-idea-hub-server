@@ -26,7 +26,6 @@ router.post(
 router.get("/", IdeaController.getAllIdeas);
 router.get(
   "/:id",
-  auth(UserRole.MEMBERS, UserRole.ADMIN),
   IdeaController.getIdeaById
 );
 
