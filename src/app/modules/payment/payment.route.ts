@@ -5,15 +5,21 @@ import { UserRole } from '@prisma/client';
 
 const router = express.Router();
 
-// router.get(
-//     '/ipn',
-//     PaymentController.validatePayment
-// )
+router.get(
+    '/ipn',
+    PaymentController.validatePayment
+)
 
 router.post(
     '/init-payment/:ideaId',
     auth(UserRole.MEMBERS),
     PaymentController.initPayment
 )
+
+router.post('/success', PaymentController.successPayment);
+router.post('/fail', PaymentController.failedPayment);
+router.post('/cancel', PaymentController.canceledPayment);
+
+router.get('/paidIdea/:ideaId', auth(UserRole.MEMBERS), PaymentController.alreadyPaidByUser)
 
 export const PaymentRoutes = router;

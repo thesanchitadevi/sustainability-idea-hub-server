@@ -1,4 +1,4 @@
-import { UserStatus } from "@prisma/client";
+import { paymentStatus, UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { IAuthUser } from "../../interfaces/common";
 import { SSLService } from "../SSL/ssl.service";
@@ -22,7 +22,7 @@ const initPayment = async (ideaId: string, user: IAuthUser) => {
 
   const initPaymentData = {
     amount: 200,
-    transactionId: userData.id,
+    transactionId: userData.id+'.'+ideaId,
     name: userData.name,
     email: userData.email,
     address: "N/A",
@@ -30,13 +30,43 @@ const initPayment = async (ideaId: string, user: IAuthUser) => {
   };
 
   const result = await SSLService.initPayment(initPaymentData);
-  console.log("res = ",result.GatewayPageURL)
-//   return {
-//     paymentUrl: result
-//   }
+  // console.log("res = ",result.GatewayPageURL)
+  return {
+    paymentUrl: result.GatewayPageURL
+  }
 };
+
+const successPayment = async(userId:string, ideaId:string, amount:string) =>{
+  const res = await prisma.payment.create({
+    data: {
+      UserId: userId,
+      IdeaId: ideaId,
+      amount: Number(amount),
+      status: paymentStatus.PAID
+    }
+  })
+  return res;
+}
+
+const validatePayment = async(payload:any) => {
+  console.log(payload)
+}
+
+const paidIdeaInfo = async(ideaId:string, user: IAuthUser) => {
+
+  const payment = await prisma.payment.findFirst({
+    where: {
+      IdeaId: ideaId,
+      UserId: user?.userId
+    }
+  })
+  return payment
+  // console.log(payment)
+}
 
 export const PaymentService = {
   initPayment,
-  // validatePayment
+  validatePayment,
+  successPayment,
+  paidIdeaInfo
 };
