@@ -1,4 +1,5 @@
-import { IdeaStatus } from "@prisma/client";
+import { IdeaStatus } from "../../../../generated/prisma";
+
 
 export type IIdeaFilters = {
   searchTerm?: string;

@@ -1,5 +1,6 @@
-import { IdeaCategory, IdeaStatus } from "@prisma/client";
+
 import { z } from "zod";
+import { IdeaCategory, IdeaStatus } from "../../../../generated/prisma";
 
 // Create Idea Validation
 const createIdeaSchema = z.object({

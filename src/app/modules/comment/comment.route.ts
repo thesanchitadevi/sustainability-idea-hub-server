@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+
 import { Router } from "express";
 import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
@@ -8,6 +8,7 @@ import {
   getCommentController,
 } from "./comment.controller";
 import { createCommentSchema } from "./comment.validation";
+import { UserRole } from "../../../../generated/prisma";
 
 export const CommentRouter = Router();
 

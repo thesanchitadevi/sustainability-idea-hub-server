@@ -66,10 +66,10 @@ CREATE TABLE "payments" (
 -- CreateTable
 CREATE TABLE "comments" (
     "id" TEXT NOT NULL,
-    "UserId" TEXT NOT NULL,
-    "IdeaId" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "idea_id" TEXT NOT NULL,
     "parent_id" TEXT,
-    "commentText" TEXT NOT NULL,
+    "comment" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -111,10 +111,10 @@ ALTER TABLE "payments" ADD CONSTRAINT "payments_UserId_fkey" FOREIGN KEY ("UserI
 ALTER TABLE "payments" ADD CONSTRAINT "payments_IdeaId_fkey" FOREIGN KEY ("IdeaId") REFERENCES "ideas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "comments" ADD CONSTRAINT "comments_IdeaId_fkey" FOREIGN KEY ("IdeaId") REFERENCES "ideas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "comments" ADD CONSTRAINT "comments_idea_id_fkey" FOREIGN KEY ("idea_id") REFERENCES "ideas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "comments"("id") ON DELETE SET NULL ON UPDATE CASCADE;

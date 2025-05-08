@@ -1,10 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import { UserControllers } from "./user.controller";
 import auth from "../../middlewares/auth";
-import { UserRole } from "@prisma/client";
+
 import { fileUploader } from "../../../helpers/fileUploader";
 import { UserValidationSchema } from "./user.validation";
 import validateRequest from "../../middlewares/validateRequest";
+import { UserRole } from "../../../../generated/prisma";
 
 const router = express.Router();
 
@@ -46,7 +47,7 @@ router.patch(
 );
 router.patch(
   "/:id/role",
-  auth( UserRole.ADMIN),
+  auth( UserRole.ADMIN, UserRole.MEMBERS),
   validateRequest(UserValidationSchema.updateRole),
   UserControllers.changeProfileRole
 );

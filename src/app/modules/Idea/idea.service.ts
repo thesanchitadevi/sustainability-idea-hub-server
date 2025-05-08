@@ -1,10 +1,5 @@
-import {
-  Idea,
-  IdeaCategory,
-  IdeaStatus,
-  Prisma,
-  UserRole,
-} from "@prisma/client";
+ 
+import { Idea, IdeaCategory, IdeaStatus, Prisma, UserRole } from "../../../../generated/prisma";
 import { fileUploader } from "../../../helpers/fileUploader";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import prisma from "../../../shared/prisma";
@@ -15,8 +10,65 @@ import { IIdeaFilters } from "./idea.interface";
 import httpStatus from "http-status";
 
 // Create a new idea with image uploads
-const createIdea = async (userId: string, payload: any, files: IFile[]) => {
-  // Upload images to Cloudinary
+// const createIdea = async (userId: string, payload: any, files: IFile[]) => {
+//   // Upload images to Cloudinary
+//   files = files as Express.Multer.File[];
+//   const uploadedImages = await Promise.all(
+//     files.map(async (file) => {
+//       const cloudinaryResponse = await fileUploader.uploadToCloudinary(file);
+//       if (!cloudinaryResponse?.secure_url) {
+//         throw new Error("Image upload failed. secure_url not returned.");
+//       }
+//       return {
+//         imageUrl: cloudinaryResponse.secure_url,
+//       };
+//     })
+//   );
+
+//   // Create the idea with associated images
+//   const result = await prisma.idea.create({
+//     data: {
+//       title: payload.title,
+//       problem_statement: payload.problemStatement,
+//       proposed_solution: payload.proposedSolution,
+//       description: payload.description,
+//       isPaid: payload.isPaid === "true",
+//       status: "DRAFT",
+//       isPublished: false,
+//       category: payload.category,
+//       images: {
+//         createMany: {
+//           data: uploadedImages,
+//         },
+//       },
+//       user: {
+//         connect: {
+//           id: userId,
+//         },
+//       },
+//     },
+//     include: {
+//       images: true,
+//       user: {
+//         // Include basic user info
+//         select: {
+//           id: true,
+//           name: true,
+//           email: true,
+//           profile_image: true,
+//         },
+//       },
+//     },
+//   });
+
+//   return result;
+// };
+
+const createIdea = async (
+  userId: string,
+  payload: any,
+  files: Express.Multer.File[]
+) => {
   const uploadedImages = await Promise.all(
     files.map(async (file) => {
       const cloudinaryResponse = await fileUploader.uploadToCloudinary(file);
@@ -29,7 +81,6 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
     })
   );
 
-  // Create the idea with associated images
   const result = await prisma.idea.create({
     data: {
       title: payload.title,
@@ -54,7 +105,6 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
     include: {
       images: true,
       user: {
-        // Include basic user info
         select: {
           id: true,
           name: true,
@@ -67,6 +117,7 @@ const createIdea = async (userId: string, payload: any, files: IFile[]) => {
 
   return result;
 };
+
 
 // Get all ideas with pagination and filtering
 const getAllIdeas = async (

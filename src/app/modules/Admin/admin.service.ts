@@ -1,9 +1,7 @@
-import { Prisma, UserStatus } from "@prisma/client";
-import { adminSearchAbleFields } from "./admin.contant";
-import { paginationHelper } from "../../../helpers/paginationHelper";
+
+
 import prisma from "../../../shared/prisma";
-import { IAdminFilterRequest } from "./admin.interface";
-import { IPaginationOptions } from "../../interfaces/pagination";
+
 
 const rejectionIdea = async (id:string, payload: {rejectionFeedback: string}) => {
   const isIdeaExists = await prisma.idea.findUniqueOrThrow({

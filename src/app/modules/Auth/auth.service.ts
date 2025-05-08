@@ -5,8 +5,9 @@ import httpStatus from "http-status";
 import { jwtHelpers } from "../../../helpers/jwtHelpers";
 import config from "../../../config";
 import { Secret } from "jsonwebtoken";
-import { UserStatus } from "@prisma/client";
+
 import emailSender from "./emailSender";
+import { UserStatus } from "../../../../generated/prisma";
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUnique({

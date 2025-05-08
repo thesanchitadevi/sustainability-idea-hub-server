@@ -8,12 +8,40 @@ import { IFile } from "../../interfaces/file";
 import { AppError } from "../../errors/AppError";
 import Pick from "../../../shared/pick";
 import { ideaFilterableFields } from "./idea.constant";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../../../generated/prisma";
+
 
 // Create a new idea
+// const createIdea = catchAsync(
+//   async (req: Request & { user?: any }, res: Response) => {
+//     // Check if user is authenticated and userId exists
+//     if (!req.user || !req.user.userId) {
+//       throw new AppError(
+//         httpStatus.UNAUTHORIZED,
+//         "User not authenticated or userId not found"
+//       );
+//     }
+
+//     const payload = req.body;
+//     const files = req.files as IFile[];
+
+//     const result = await IdeaServices.createIdea(
+//       req.user.userId,
+//       payload,
+//       files
+//     );
+
+//     sendResponse(res, {
+//       statusCode: httpStatus.CREATED,
+//       success: true,
+//       message: "Idea created successfully",
+//       data: result,
+//     });
+//   }
+// );
+
 const createIdea = catchAsync(
   async (req: Request & { user?: any }, res: Response) => {
-    // Check if user is authenticated and userId exists
     if (!req.user || !req.user.userId) {
       throw new AppError(
         httpStatus.UNAUTHORIZED,
@@ -22,7 +50,7 @@ const createIdea = catchAsync(
     }
 
     const payload = req.body;
-    const files = req.files as IFile[];
+    const files = req.files as Express.Multer.File[];
 
     const result = await IdeaServices.createIdea(
       req.user.userId,
@@ -38,6 +66,8 @@ const createIdea = catchAsync(
     });
   }
 );
+
+
 
 // Get all ideas with pagination and filtering
 const getAllIdeas = catchAsync(async (req: Request, res: Response) => {

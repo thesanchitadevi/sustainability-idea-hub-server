@@ -1,4 +1,4 @@
-import {  Prisma, User, UserRole, UserStatus } from "@prisma/client";
+
 import bcrypt from "bcrypt";
 import prisma from "../../../shared/prisma";
 import { Request } from "express";
@@ -8,6 +8,7 @@ import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { userSearchableFields } from "./user.contants";
 import { IAuthUser } from "../../interfaces/common";
+import { Prisma, UserRole } from "../../../../generated/prisma";
 
 // const createAdmin = async (req: Request): Promise<Admin> => {
 //   const file = req.file as IFile;
@@ -41,41 +42,75 @@ import { IAuthUser } from "../../interfaces/common";
 //   return result;
 // };
 
+// const createUser = async (req: Request) => {
+//   const file = req.file as IFile;
+//   // console.log("file", file);
+//   let profileImageUrl = '';
+//   if (file) {
+//     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+//     profileImageUrl = uploadToCloudinary?.secure_url || '';
+//   }
+//   const hashedPassword: string = await bcrypt.hash(req.body.password, 12);
+
+//   const userData = {
+//     email: req.body.user.email,
+//     password: hashedPassword,
+//     name: req.body.user.name, //added name to userData
+//     profile_image: profileImageUrl,
+//   };
+//   // console.log("userdata = ", userData)
+
+//    const result = await prisma.user.create({
+//     data: userData,
+//     select: {
+//       id: true,
+//       email: true,
+//       name:true,
+//       role:true,
+//       createdAt: true,
+//       updatedAt: true
+//     }
+//    })
+
+  
+
+ 
+//   return result;
+// };
+
 const createUser = async (req: Request) => {
-  const file = req.file as IFile;
-  // console.log("file", file);
+  const file = req.file as Express.Multer.File;
   let profileImageUrl = '';
+
   if (file) {
-    const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
-    profileImageUrl = uploadToCloudinary?.secure_url || '';
+    const cloudinaryResponse = await fileUploader.uploadToCloudinary(file);
+    profileImageUrl = cloudinaryResponse?.secure_url || '';
   }
+
   const hashedPassword: string = await bcrypt.hash(req.body.password, 12);
 
   const userData = {
     email: req.body.user.email,
     password: hashedPassword,
-    name: req.body.user.name, //added name to userData
+    name: req.body.user.name,
     profile_image: profileImageUrl,
   };
-  // console.log("userdata = ", userData)
 
-   const result = await prisma.user.create({
+  const result = await prisma.user.create({
     data: userData,
     select: {
       id: true,
       email: true,
-      name:true,
-      role:true,
+      name: true,
+      role: true,
       createdAt: true,
-      updatedAt: true
-    }
-   })
+      updatedAt: true,
+    },
+  });
 
-  
-
- 
   return result;
 };
+
 
 const getAllUsersFromDB = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip } = paginationHelper.calculatePagination(options);

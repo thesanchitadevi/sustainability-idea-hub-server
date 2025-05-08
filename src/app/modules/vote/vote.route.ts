@@ -1,9 +1,10 @@
-import { UserRole } from "@prisma/client";
+
 import { Router } from "express";
 import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
 import { getVoteController, voteController } from "./vote.controller";
 import { voteSchema } from "./vote.validation";
+import { UserRole } from "../../../../generated/prisma";
 
 export const VoteRoutes = Router();
 

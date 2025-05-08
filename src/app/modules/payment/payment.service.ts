@@ -1,4 +1,5 @@
-import { paymentStatus, UserStatus } from "@prisma/client";
+
+import { paymentStatus, UserStatus } from "../../../../generated/prisma";
 import prisma from "../../../shared/prisma";
 import { IAuthUser } from "../../interfaces/common";
 import { SSLService } from "../SSL/ss.service";
