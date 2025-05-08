@@ -7,13 +7,13 @@ import Pick from "../../../shared/pick";
 import { userFilterableFields } from "./user.contants";
 import { IAuthUser } from "../../interfaces/common";
 
-const createAdmin = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserServices.createAdmin(req);
+const createUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.createUser(req);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Admin Created successfuly!",
+    message: "User Created successfuly!",
     data: result,
   });
 });
@@ -44,39 +44,52 @@ const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const changeProfileRole = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserServices.changeProfileRole(id, req.body);
 
-const getMyProfile = catchAsync(
-  async (req: Request & { user?: IAuthUser }, res: Response) => {
-    const user = req.user;
-    const result = await UserServices.getMyProfile(user as IAuthUser);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User Role changed successfully!",
+    data: result,
+  });
+});
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "User profile retrieved successfully!",
-      data: result,
-    });
-  }
-);
+// const getMyProfile = catchAsync(
+//   async (req: Request & { user?: IAuthUser }, res: Response) => {
+//     const user = req.user;
+//     const result = await UserServices.getMyProfile(user as IAuthUser);
 
-const updateMyProfile = catchAsync(
-  async (req: Request & { user?: IAuthUser }, res: Response) => {
-    const user = req.user;
-    const result = await UserServices.updateMyProfile(user as IAuthUser, req);
+//     sendResponse(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: "User profile retrieved successfully!",
+//       data: result,
+//     });
+//   }
+// );
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "My profile updated successfully!",
-      data: result,
-    });
-  }
-);
+// const updateMyProfile = catchAsync(
+//   async (req: Request & { user?: IAuthUser }, res: Response) => {
+//     const user = req.user;
+//     const result = await UserServices.updateMyProfile(user as IAuthUser, req);
+
+//     sendResponse(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: "My profile updated successfully!",
+//       data: result,
+//     });
+//   }
+// );
 
 export const UserControllers = {
-  createAdmin,
+  createUser,
   gettAllUsers,
   changeProfileStatus,
-  getMyProfile,
-  updateMyProfile,
+  changeProfileRole
+  // changeProfileStatus,
+  // getMyProfile,
+  // updateMyProfile,
 };
