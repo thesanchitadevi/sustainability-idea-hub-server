@@ -159,7 +159,7 @@ const getAllUsersFromDB = async (params: any, options: IPaginationOptions) => {
       id: true,
       email: true,
       role: true,
-     
+      name: true,
       status: true,
       createdAt: true,
       updatedAt: true,
@@ -201,6 +201,7 @@ const changeProfileRole = async (id: string, role: UserRole) => {
   await prisma.user.findUniqueOrThrow({
    where: {
      id,
+     status:'ACTIVE'
    },
  });
 
