@@ -3,6 +3,8 @@
 
 generator client {
   provider = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -10,48 +12,137 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                 String     @id @default(cuid())
-  name               String
-  email              String     @unique
-  password           String
-  needPasswordChange Boolean    @default(true)
-  profileImage       String?
-  role               UserRole   @default(MEMBER)
-  status             UserStatus @default(ACTIVE)
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @default(now())
-
-  // Relations
-  admin Admin?
-
-  @@map("users")
-}
-
-model Admin {
-  id            String   @id @default(cuid())
-  name          String
-  email         String   @unique
-  profileImage  String?
-  contactNumber String
-  isDeleted     Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  user User? @relation(fields: [email], references: [email])
-
-  @@map("admins")
-}
-
-// Enums
 enum UserRole {
-  SUPER_ADMIN
+  MEMBERS
   ADMIN
-  MEMBER
 }
 
 enum UserStatus {
   ACTIVE
   BLOCKED
   DELETED
+}
+
+enum paymentStatus {
+  PENDING
+  FAILED
+  PAID
+}
+
+enum IdeaStatus {
+  UNDER_REVIEW
+  APPROVED
+  REJECT
+  DRAFT
+}
+
+enum VoteType {
+  UP_VOTE
+  DOWN_VOTE
+}
+
+enum IdeaCategory {
+  ENERGY
+  WASTE
+  TRANSPORTATION
+}
+
+model User {
+  id            String     @id @default(uuid())
+  email         String     @unique
+  name          String
+  password      String
+  profile_image String
+  role          UserRole   @default(MEMBERS)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  ideas    Idea[]
+  comments Comment[]
+  payments Payment[]
+  votes    Vote[]
+
+  @@map("users")
+}
+
+model Idea {
+  id                String       @id @default(uuid())
+  user_id           String
+  title             String
+  problem_statement String
+  proposed_solution String
+  description       String
+  isPaid            Boolean
+  status            IdeaStatus
+  isPublished       Boolean
+  category          IdeaCategory
+  rejectionFeedback String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  user     User         @relation(fields: [user_id], references: [id])
+  payments Payment[]
+  comments Comment[]
+  images   IdeaImages[]
+  votes    Vote[]
+
+  @@map("ideas")
+}
+
+model Payment {
+  payment_id String        @id @default(uuid())
+  UserId     String
+  IdeaId     String
+  amount     Int
+  status     paymentStatus
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  user User @relation(fields: [UserId], references: [id])
+  idea Idea @relation(fields: [IdeaId], references: [id])
+
+  @@map("payments")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  user_id   String
+  idea_id   String
+  parent_id String?
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User      @relation(fields: [user_id], references: [id])
+  idea    Idea      @relation(fields: [idea_id], references: [id])
+  parent  Comment?  @relation("CommentReplies", fields: [parent_id], references: [id])
+  replies Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  user_id   String
+  idea_id   String
+  vote_type VoteType
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+  idea Idea @relation(fields: [idea_id], references: [id])
+
+  @@map("votes")
+}
+
+model IdeaImages {
+  id        String   @id @default(uuid())
+  idea_id   String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  idea Idea @relation(fields: [idea_id], references: [id])
+
+  @@map("idea_images")
 }
