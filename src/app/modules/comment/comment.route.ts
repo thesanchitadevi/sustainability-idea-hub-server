@@ -1,4 +1,3 @@
-
 import { Router } from "express";
 import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
@@ -18,7 +17,7 @@ CommentRouter.post(
   validateRequest(createCommentSchema),
   createCommnetController
 );
-CommentRouter.get("/:ideaId", auth(UserRole.MEMBERS), getCommentController);
+CommentRouter.get("/:ideaId", getCommentController);
 CommentRouter.delete(
   "/:commentId",
   auth(UserRole.ADMIN),
