@@ -15,6 +15,8 @@ router.patch(
   validateRequest(AdminValidationSchemas.rejectionFeedbackValidation),
   AdminControllers.rejectionIdea
 );
+router.get('/idea-for-admin', auth(UserRole.ADMIN), AdminControllers.getAllIdeasLForAdmin);
+
 
 // reject idea with rejection feedback
 
