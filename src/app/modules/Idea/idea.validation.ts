@@ -16,7 +16,9 @@ const createIdeaSchema = z.object({
   description: z.string({
     required_error: "Description is required",
   }),
-  isPaid: z.string().optional(),
+  isPaid: z.string({
+    required_error: "isPaid is required",
+  }),
   category: z.enum([...Object.values(IdeaCategory)] as [string, ...string[]], {
     required_error: "Category is required",
   }),
