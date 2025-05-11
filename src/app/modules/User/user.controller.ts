@@ -56,19 +56,19 @@ const changeProfileRole = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const getMyProfile = catchAsync(
-//   async (req: Request & { user?: IAuthUser }, res: Response) => {
-//     const user = req.user;
-//     const result = await UserServices.getMyProfile(user as IAuthUser);
+const getMyProfile = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const result = await UserServices.getMyProfile(user as IAuthUser);
 
-//     sendResponse(res, {
-//       statusCode: httpStatus.OK,
-//       success: true,
-//       message: "User profile retrieved successfully!",
-//       data: result,
-//     });
-//   }
-// );
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User profile retrieved successfully!",
+      data: result,
+    });
+  }
+);
 
 // const updateMyProfile = catchAsync(
 //   async (req: Request & { user?: IAuthUser }, res: Response) => {
@@ -88,8 +88,8 @@ export const UserControllers = {
   createUser,
   gettAllUsers,
   changeProfileStatus,
-  changeProfileRole
+  changeProfileRole,
   // changeProfileStatus,
-  // getMyProfile,
+  getMyProfile,
   // updateMyProfile,
 };

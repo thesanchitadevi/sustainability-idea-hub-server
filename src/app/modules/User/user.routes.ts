@@ -15,11 +15,11 @@ router.get(
   UserControllers.gettAllUsers
 );
 
-// router.get(
-//   "/me",
-//   auth(UserRole.ADMIN),
-//   UserControllers.getMyProfile
-// );
+router.get(
+  "/me",
+  auth(UserRole.ADMIN, UserRole.MEMBERS),
+  UserControllers.getMyProfile
+);
 
 router.post(
   "/create-user",
