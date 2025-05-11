@@ -87,7 +87,7 @@ const createIdea = async (
       problem_statement: payload.problemStatement,
       proposed_solution: payload.proposedSolution,
       description: payload.description,
-      isPaid: payload.isPaid === "true",
+      isPaid: payload.isPaid,
       status: "DRAFT",
       isPublished: false,
       category: payload.category,
