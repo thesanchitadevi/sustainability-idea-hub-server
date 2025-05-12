@@ -6,7 +6,7 @@ import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import cookieParser from "cookie-parser";
 
 const app: Application = express();
-app.use(cors({origin: ['http://localhost:3000']}));
+app.use(cors({origin: ['http://localhost:3000', 'https://sustainability-idea-hub-client-topaz.vercel.app']}));
 app.use(cookieParser());
 
 //parser
