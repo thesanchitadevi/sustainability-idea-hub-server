@@ -127,7 +127,7 @@ const getAllIdeas = async (
   const { limit, page, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(paginationOptions);
 
-  const { searchTerm, category, isPaid, ...filterData } = filters;
+  const { searchTerm, category, isPaid, isPublished, ...filterData } = filters;
 
   const andConditions: Prisma.IdeaWhereInput[] = [];
 
@@ -163,6 +163,7 @@ const getAllIdeas = async (
     });
   }
 
+
   // Category filtering
   if (category) {
     andConditions.push({
@@ -178,6 +179,13 @@ const getAllIdeas = async (
       isPaid: isPaid === "true" || isPaid === true,
     });
   }
+  if (isPublished !== undefined) {
+    andConditions.push({
+      isPublished:  isPublished === 'true' ? true : false
+    });
+  }
+
+
 
   // Filter by status, isPublished, etc.
   if (Object.keys(filterData).length > 0) {

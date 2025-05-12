@@ -6,7 +6,7 @@ export type IIdeaFilters = {
   category?: string;
   isPaid?: boolean | string;
   status?: string;
-  isPublished?: boolean;
+  isPublished?: boolean | string;
   userId?: string;
 };
 
