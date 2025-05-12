@@ -14,4 +14,4 @@ VoteRoutes.post(
   validateRequest(voteSchema),
   voteController
 );
-VoteRoutes.get("/:ideaId", auth(UserRole.MEMBERS), getVoteController);
+VoteRoutes.get("/:ideaId", getVoteController);

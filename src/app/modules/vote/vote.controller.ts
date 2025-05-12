@@ -27,11 +27,11 @@ export const voteController = catchAsync(
 
 export const getVoteController = catchAsync(
   async (req: Request, res: Response) => {
-    const userId = req.user?.userId;
+    // const userId = req.user?.userId;
     const { ideaId } = req.params;
-    if (!userId) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
-    }
+    // if (!userId) {
+    //   throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
+    // }
     // Call the service to handle the vote
     const result = await getVoteService(ideaId);
 

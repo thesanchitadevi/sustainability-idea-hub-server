@@ -6,6 +6,7 @@ const ideaFilterableFields = [
   "category",
   "status",
   "isPublished",
+  "isPaid"
 ];
 
 const ideaSearchableFields = [
@@ -13,6 +14,8 @@ const ideaSearchableFields = [
   "problemStatement",
   "proposedSolution",
   "category",
+  "isPaid",
+  "isPublished"
 ];
 
 export { ideaFilterableFields, ideaSearchableFields };
